@@ -53,8 +53,8 @@ function calc_pb_shortcode ($atts, $content) {
   ];
 
   $extras = [
-    "flyers" => __("Opción flyers (1.000 uns)", "calc-pb"),
-    "design" => __("Opción diseño de la lona", "calc-pb")
+    "flyers" => __("Flyers (1.000 uns)", "calc-pb"),
+    "design" => __("Diseño de la lona", "calc-pb")
   ];
 
   $states = ['Álava/Araba', "Bizkaia", "Guipuzkoa", "Cantabria", "Navarra", "Rioja"];
@@ -128,13 +128,12 @@ function calc_pb_shortcode ($atts, $content) {
       </select>
     </label>
     <?php _e("Tipo de semana", "calc-pb"); ?>
-    <div style="display: flex;">
+    <div style="display: flex; gap: 10px;">
       <?php foreach ($timetables as $label => $text) { ?> 
         <label>
-          <?=$text?>
           <input type="radio" name="days" value="<?=$label?>"<?=(isset($_REQUEST['days']) && $label == $_REQUEST['days'] ? " checked='checked'" : "")?> required>
           <img src="/wp-content/plugins/calculadora-publibicis/images/<?=$label?>.jpg" alt="<?=$text?>" />
-          
+          <?=$text?>
         </label>
       <?php } ?>
     </div>
@@ -145,20 +144,22 @@ function calc_pb_shortcode ($atts, $content) {
       <?php _e("Número de semanas", "calc-pb"); ?>
     </label>
     <?php _e("Tamaño lona", "calc-pb"); ?>
-    <div style="display: flex;">
+    <div style="display: flex; gap: 10px;">
       <?php foreach ($sizes as $label => $text) { ?> 
         <label>
-          <input type="radio" name="size" value="<?=$label?>"<?=(isset($_REQUEST['size']) && $label == $_REQUEST['size'] ? " checked='checked'" : "")?> required> <?=$text?>
+          <input type="radio" name="size" value="<?=$label?>"<?=(isset($_REQUEST['size']) && $label == $_REQUEST['size'] ? " checked='checked'" : "")?> required>
           <img src="/wp-content/plugins/calculadora-publibicis/images/<?=$label?>.jpg" alt="<?=$text?>" />
+          <?=$text?>
         </label>
       <?php } ?>
     </div>
-    <?php _e("Extras", "calc-pb"); ?>
-    <div style="display: flex;">
+    <?php _e("Opciones", "calc-pb"); ?>
+    <div style="display: flex; gap: 10px;">
       <?php foreach ($extras as $label => $text) { ?> 
         <label>
-          <input type="checkbox" name="<?=$label?>" value="1"<?=(isset($_REQUEST[$label]) && 1 == $_REQUEST[$label] ? " checked='checked'" : "")?>> <?=$text?>
+          <input type="checkbox" name="<?=$label?>" value="1"<?=(isset($_REQUEST[$label]) && 1 == $_REQUEST[$label] ? " checked='checked'" : "")?>>
           <img src="/wp-content/plugins/calculadora-publibicis/images/<?=$label?>.jpg" alt="<?=$text?>" />
+          <?=$text?>
         </label>
       <?php } ?>
     </div>
