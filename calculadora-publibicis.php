@@ -69,102 +69,136 @@ function calc_pb_shortcode ($atts, $content) {
       }
     }
     
-    ?>
-    <table>
+   $html = '<table border="1" cellpadding="10" cellspacing="0" width="100%">
       <thead>
         <tr>
-          <th><?php _e("Concepto", "calc-pb"); ?></th>
-          <th><?php _e("Unidades", "calc-pb"); ?></th>
-          <th><?php _e("Coste por unidad", "calc-pb"); ?></th>
-          <th><?php _e("Coste total", "calc-pb"); ?></th>
+          <th>'.__("Concepto", "calc-pb").'</th>
+          <th>'.__("Unidades", "calc-pb").'</th>
+          <th>'.__("Coste por unidad", "calc-pb").'</th>
+          <th>'.__("Coste total", "calc-pb").'</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><?=$timetables[$_REQUEST['days']]?></td>
-          <td style="text-align: center;"><?=$_REQUEST['weeks']?></td>
-          <td style="text-align: right;"><?=number_format($prices[$_REQUEST['days']], 2, ",", ".")." €"?></td>
-          <td style="text-align: right;"><?=number_format(($_REQUEST['weeks'] * $prices[$_REQUEST['days']]), 2, ",", ".")." €"?></td>
+          <td>'.$timetables[$_REQUEST['days']].'</td>
+          <td style="text-align: center;">'.$_REQUEST['weeks'].'</td>
+          <td style="text-align: right;">'.number_format($prices[$_REQUEST['days']], 2, ",", ".")." €".'</td>
+          <td style="text-align: right;">'.number_format(($_REQUEST['weeks'] * $prices[$_REQUEST['days']]), 2, ",", ".")." €".'</td>
         </tr>
         <tr>
-          <td><?=$sizes[$_REQUEST['size']]?></td>
+          <td>'.$sizes[$_REQUEST['size']].'</td>
           <td style="text-align: center;">1</td>
-          <td style="text-align: right;"><?=number_format($prices[$_REQUEST['size']], 2, ",", ".")." €"?></td>
-          <td style="text-align: right;"><?=number_format($prices[$_REQUEST['size']], 2, ",", ".")." €"?></td>
-        </tr>
-        <?php foreach ($extras as $label => $text) { if(isset($_REQUEST[$label]) && $_REQUEST[$label] == 1) { ?>
-          <tr>
-            <td><?=$text?></td>
-            <td style="text-align: center;">1</td>
-            <td style="text-align: right;"><?=number_format($prices[$label], 2, ",", ".")." €"?></td>
-            <td style="text-align: right;"><?=number_format($prices[$label], 2, ",", ".")." €"?></td>
-          </tr>
-        <?php } }?>
-        <tr>
-          <th colspan="2"><?php _e("Total", "calc-pb"); ?></th>
-          <td colspan="2" style="text-align: right;"><?=number_format($total, 2, ",", ".")." €"?></td>
+          <td style="text-align: right;">'.number_format($prices[$_REQUEST['size']], 2, ",", ".")." €".'</td>
+          <td style="text-align: right;">'.number_format($prices[$_REQUEST['size']], 2, ",", ".")." €".'</td>
+        </tr>';
+        foreach ($extras as $label => $text) { 
+          if(isset($_REQUEST[$label]) && $_REQUEST[$label] == 1) { 
+            $html .= '<tr>
+                <td>'.$text.'</td>
+                <td style="text-align: center;">1</td>
+                <td style="text-align: right;">'.number_format($prices[$label], 2, ",", ".")." €".'</td>
+                <td style="text-align: right;">'.number_format($prices[$label], 2, ",", ".")." €".'</td>
+              </tr>';
+          } 
+        }
+        $html .= '<tr>
+          <th colspan="2">'.__("Total", "calc-pb").'</th>
+          <td colspan="2" style="text-align: right;">'.number_format($total, 2, ",", ".")." €".'</td>
         </tr>
       </tbody>
-    </table>
+    </table>';
+
+    echo $html;
+
+    require_once __DIR__ . '/vendor/autoload.php';
+    $pdf = new \Mpdf\Mpdf();
+    $pagecount = $pdf->SetSourceFile(__DIR__ . '/dossier.pdf');
+    for ($i=1; $i<=$pagecount; $i++) {
+        $import_page = $pdf->ImportPage($i);
+        $pdf->UseTemplate($import_page);
+        if ($i < $pagecount)
+            $pdf->AddPage();
+    }
+    $pdf->AddPage();
+    $pdf->WriteHTML($html);
+    $pdf->SetTitle("Presupuesto para ".$_REQUEST['fullname']." ".date("Y/m/d H:i"));
+    $pdf->SetAuthor("PubliBicis");
+    $file = __DIR__ .'/presupuesto-'.hash('ripemd160', date("YmdHis").rand(1, 1000000)).'.pdf';
+    $pdf->Output($file,'F');
+    //Mandamos email con el presupuesto
+    $headers[] = 'MIME-Version: 1.0';
+    $headers[] = 'Content-type: text/html; charset=utf-8';
+    $message = "Aquí tienes tu presupuesto";
+    wp_mail($_REQUEST['email'], "Presupuesto", $message, $headers, $file);
+
+    //Mandamos email al administrador
+    $headers[] = 'Reply-to: '.$_REQUEST['phone'];
+    $message = "<b>Nombre:</b> ".$_REQUEST['fullname']."<br/>\n".
+    "<b>Teléfono:</b> ".$_REQUEST['phone']."<br/>\n".
+    "<b>Email:</b> ".$_REQUEST['email']."<br/>\n".
+    "<b>Provincia:</b> ".$_REQUEST['state']."<br/><br/><br/>\n".$html;
+    wp_mail('jorge@enutt.net', "Solicitud de presupuesto", $message, $headers, $file);
+    unlink($file);
+  } else { ?>
+    <form method="post">
+      <label>
+        <?php _e("Nombre completo", "calc-pb"); ?>*
+        <input type="text" name="fullname" value="<?=(isset($_REQUEST['fullname']) && $_REQUEST['fullname'] != '' ? strip_tags($_REQUEST['fullname']) : "")?>" required>
+      </label>
+      <label>
+        <?php _e("Teléfono", "calc-pb"); ?>*
+        <input type="phone" name="phone" value="<?=(isset($_REQUEST['phone']) && $_REQUEST['phone'] != '' ? strip_tags($_REQUEST['phone']) : "")?>" required>
+      </label>
+      <label>
+        <?php _e("Email", "calc-pb"); ?>*
+        <input type="email" name="email" value="<?=(isset($_REQUEST['email']) && $_REQUEST['email'] != '' ? strip_tags($_REQUEST['email']) : "")?>" required>
+      </label>
+      <label>
+        <select name="state" required>
+          <?php foreach($states as $state) { ?> 
+            <option value="<?=$state?>"<?=(isset($_REQUEST['state']) && $state == $_REQUEST['state'] ? " selected='selected'" : "")?>><?=$state?></option>
+          <?php } ?> 
+        </select>
+      </label>
+      <?php _e("Tipo de semana", "calc-pb"); ?>
+      <div style="display: flex; gap: 10px;">
+        <?php foreach ($timetables as $label => $text) { ?> 
+          <label>
+            <input type="radio" name="days" value="<?=$label?>"<?=(isset($_REQUEST['days']) && $label == $_REQUEST['days'] ? " checked='checked'" : "")?> required>
+            <img src="/wp-content/plugins/calculadora-publibicis/images/<?=$label?>.jpg" alt="<?=$text?>" />
+            <?=$text?>
+          </label>
+        <?php } ?>
+      </div>
+      <label>
+        <select name="weeks">
+          <?php for($i = 1; $i <= 10; $i++) { ?><option value="<?=$i?>"<?=(isset($_REQUEST['weeks']) && $i == $_REQUEST['weeks'] ? " selected='selected'" : "")?>><?=$i?></option><?php } ?>
+        </select>
+        <?php _e("Número de semanas", "calc-pb"); ?>
+      </label>
+      <?php _e("Tamaño lona", "calc-pb"); ?>
+      <div style="display: flex; gap: 10px;">
+        <?php foreach ($sizes as $label => $text) { ?> 
+          <label>
+            <input type="radio" name="size" value="<?=$label?>"<?=(isset($_REQUEST['size']) && $label == $_REQUEST['size'] ? " checked='checked'" : "")?> required>
+            <img src="/wp-content/plugins/calculadora-publibicis/images/<?=$label?>.jpg" alt="<?=$text?>" />
+            <?=$text?>
+          </label>
+        <?php } ?>
+      </div>
+      <?php _e("Opciones", "calc-pb"); ?>
+      <div style="display: flex; gap: 10px;">
+        <?php foreach ($extras as $label => $text) { ?> 
+          <label>
+            <input type="checkbox" name="<?=$label?>" value="1"<?=(isset($_REQUEST[$label]) && 1 == $_REQUEST[$label] ? " checked='checked'" : "")?>>
+            <img src="/wp-content/plugins/calculadora-publibicis/images/<?=$label?>.jpg" alt="<?=$text?>" />
+            <?=$text?>
+          </label>
+        <?php } ?>
+      </div>
+      <input type="submit" name="calculate" value="<?php _e("Solicitar presupuesto", "calc-pb"); ?>">
+    </form>
   <?php } ?>
-  <form method="post">
-    <label>
-      <?php _e("Nombre completo", "calc-pb"); ?>*
-      <input type="text" name="fullname" value="<?=(isset($_REQUEST['fullname']) && $_REQUEST['fullname'] != '' ? strip_tags($_REQUEST['fullname']) : "")?>" required>
-    </label>
-    <label>
-      <?php _e("Teléfono", "calc-pb"); ?>*
-      <input type="phone" name="phone" value="<?=(isset($_REQUEST['phone']) && $_REQUEST['phone'] != '' ? strip_tags($_REQUEST['phone']) : "")?>" required>
-    </label>
-    <label>
-      <?php _e("Email", "calc-pb"); ?>*
-      <input type="email" name="email" value="<?=(isset($_REQUEST['email']) && $_REQUEST['email'] != '' ? strip_tags($_REQUEST['email']) : "")?>" required>
-    </label>
-    <label>
-      <select name="state" required>
-        <?php foreach($states as $state) { ?> 
-          <option value="<?=$state?>"<?=(isset($_REQUEST['state']) && $state == $_REQUEST['state'] ? " selected='selected'" : "")?>><?=$state?></option>
-        <?php } ?> 
-      </select>
-    </label>
-    <?php _e("Tipo de semana", "calc-pb"); ?>
-    <div style="display: flex; gap: 10px;">
-      <?php foreach ($timetables as $label => $text) { ?> 
-        <label>
-          <input type="radio" name="days" value="<?=$label?>"<?=(isset($_REQUEST['days']) && $label == $_REQUEST['days'] ? " checked='checked'" : "")?> required>
-          <img src="/wp-content/plugins/calculadora-publibicis/images/<?=$label?>.jpg" alt="<?=$text?>" />
-          <?=$text?>
-        </label>
-      <?php } ?>
-    </div>
-    <label>
-      <select name="weeks">
-        <?php for($i = 1; $i <= 10; $i++) { ?><option value="<?=$i?>"<?=(isset($_REQUEST['weeks']) && $i == $_REQUEST['weeks'] ? " selected='selected'" : "")?>><?=$i?></option><?php } ?>
-      </select>
-      <?php _e("Número de semanas", "calc-pb"); ?>
-    </label>
-    <?php _e("Tamaño lona", "calc-pb"); ?>
-    <div style="display: flex; gap: 10px;">
-      <?php foreach ($sizes as $label => $text) { ?> 
-        <label>
-          <input type="radio" name="size" value="<?=$label?>"<?=(isset($_REQUEST['size']) && $label == $_REQUEST['size'] ? " checked='checked'" : "")?> required>
-          <img src="/wp-content/plugins/calculadora-publibicis/images/<?=$label?>.jpg" alt="<?=$text?>" />
-          <?=$text?>
-        </label>
-      <?php } ?>
-    </div>
-    <?php _e("Opciones", "calc-pb"); ?>
-    <div style="display: flex; gap: 10px;">
-      <?php foreach ($extras as $label => $text) { ?> 
-        <label>
-          <input type="checkbox" name="<?=$label?>" value="1"<?=(isset($_REQUEST[$label]) && 1 == $_REQUEST[$label] ? " checked='checked'" : "")?>>
-          <img src="/wp-content/plugins/calculadora-publibicis/images/<?=$label?>.jpg" alt="<?=$text?>" />
-          <?=$text?>
-        </label>
-      <?php } ?>
-    </div>
-    <input type="submit" name="calculate" value="<?php _e("Solicitar presupuesto", "calc-pb"); ?>">
-  </form>
   <script>
 
   </script>
@@ -182,7 +216,6 @@ function calc_pb_shortcode ($atts, $content) {
     input[type=checkbox]:checked ~ img {
       border: 4px solid green;
     } 
-
   </style>
   <?php return ob_get_clean();
 }
