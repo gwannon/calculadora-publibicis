@@ -108,7 +108,7 @@ function calc_pb_shortcode ($atts, $content) {
         </tr>
       </tbody>
     </table>';
-    echo $html;
+    echo apply_filters("the_content", stripslashes(get_option('_calc_pb_afterform_message')));
 
     //Metemos el usuario en Clientify y añadimos etiqueta #publibicis #form-publibicis 
     calc_pb_create_clientify_contact ($_REQUEST['email'], $_REQUEST['fullname'], $_REQUEST['phone']);
@@ -119,8 +119,8 @@ function calc_pb_shortcode ($atts, $content) {
     //Mandamos email con el presupuesto
     $headers[] = 'MIME-Version: 1.0';
     $headers[] = 'Content-type: text/html; charset=utf-8';
-    $message = "Aquí tienes tu presupuesto";
-    wp_mail($_REQUEST['email'], "Presupuesto", $message, $headers, $file);
+    $message = apply_filters("the_content", stripslashes(str_replace("[HTML]", $html, get_option('_calc_pb_email_html'))));
+    wp_mail($_REQUEST['email'], get_option('_calc_pb_email_subject'), $message, $headers, $file);
 
     //Mandamos email al administrador
     $headers[] = 'Reply-to: '.$_REQUEST['email'];
@@ -219,7 +219,7 @@ function calc_pb_shortcode ($atts, $content) {
 /* Libs */
 function calc_pb_generate_pdf ($html) {
   $pdf = new \Mpdf\Mpdf();
-  $pagecount = $pdf->SetSourceFile(__DIR__ . '/dossier.pdf');
+  $pagecount = $pdf->SetSourceFile(get_attached_file(get_option('_calc_pb_dossier_pdf_id')));
   for ($i=1; $i<=$pagecount; $i++) {
     $import_page = $pdf->ImportPage($i);
     $pdf->UseTemplate($import_page);
