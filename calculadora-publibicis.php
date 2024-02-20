@@ -12,24 +12,27 @@
  * WordPress 6.4.3
  */
 
- /*
-  Tarifas:
+require_once __DIR__ . '/vendor/autoload.php';
+use Gwannon\PHPClientifyAPI\contactClientify;
 
-  Publibicis One (weekend) 3 Dias 	€ 1200.00
-  Publibicis One (week) 5 Dias	€ 1500.00
-  Publibicis One (week) 7 Dias	€ 1900.00
-  Coste impresión lona One	€ 250.00
-  Coste impresión lona + Plus	€ 350.00
-  Coste impresión lona XL Plus	€ 450.00
-*/
+require __DIR__ . '/admin.php';
 
+//Cargamos el multi-idioma
+function calc_pb_plugins_loaded() {
+  load_plugin_textdomain('calc-pb', false, dirname( plugin_basename( __FILE__ ) ) . '/langs/' );
+}
+add_action('plugins_loaded', 'calc_pb_plugins_loaded', 0 );
+
+define("CLIENTIFY_API_URL", "https://api.clientify.net/v1");
+define("CLIENTIFY_LOG_API_CALLS", false);
+define('CLIENTIFY_API_KEY', get_option("_calc_pb_clientify_api_key"));
 
 //Shortcode [calc-pb]
 add_shortcode('calc-pb', 'calc_pb_shortcode');
 function calc_pb_shortcode ($atts, $content) {
   ob_start(); 
 
-  $prices = [
+  $prices = get_option("_calc_pb_prices"); /*[
     "weekend" => 1200,
     "workweek" => 1500,
     "week" => 1900,
@@ -38,7 +41,7 @@ function calc_pb_shortcode ($atts, $content) {
     "xl-plus" => 450,
     "flyers" => 370,
     "design" => 200
-  ];
+  ];*/
 
   $timetables = [
     "weekend" => __("Publibicis One (weekend) 3 Dias", "calc-pb"),
@@ -58,8 +61,6 @@ function calc_pb_shortcode ($atts, $content) {
   ];
 
   $states = ['Álava/Araba', "Bizkaia", "Guipuzkoa", "Cantabria", "Navarra", "Rioja"];
-
-  
   
   if(isset($_REQUEST['calculate'])) { 
     $total = $prices[$_REQUEST['size']] + ($_REQUEST['weeks'] * $prices[$_REQUEST['days']]);
@@ -107,24 +108,14 @@ function calc_pb_shortcode ($atts, $content) {
         </tr>
       </tbody>
     </table>';
-
     echo $html;
 
-    require_once __DIR__ . '/vendor/autoload.php';
-    $pdf = new \Mpdf\Mpdf();
-    $pagecount = $pdf->SetSourceFile(__DIR__ . '/dossier.pdf');
-    for ($i=1; $i<=$pagecount; $i++) {
-        $import_page = $pdf->ImportPage($i);
-        $pdf->UseTemplate($import_page);
-        if ($i < $pagecount)
-            $pdf->AddPage();
-    }
-    $pdf->AddPage();
-    $pdf->WriteHTML($html);
-    $pdf->SetTitle("Presupuesto para ".$_REQUEST['fullname']." ".date("Y/m/d H:i"));
-    $pdf->SetAuthor("PubliBicis");
-    $file = __DIR__ .'/presupuesto-'.hash('ripemd160', date("YmdHis").rand(1, 1000000)).'.pdf';
-    $pdf->Output($file,'F');
+    //Metemos el usuario en Clientify y añadimos etiqueta #publibicis #form-publibicis 
+    calc_pb_create_clientify_contact ($_REQUEST['email'], $_REQUEST['fullname'], $_REQUEST['phone']);
+
+    //Generamos el PDF del presupuesto
+    $file = calc_pb_generate_pdf($html);
+   
     //Mandamos email con el presupuesto
     $headers[] = 'MIME-Version: 1.0';
     $headers[] = 'Content-type: text/html; charset=utf-8';
@@ -132,12 +123,16 @@ function calc_pb_shortcode ($atts, $content) {
     wp_mail($_REQUEST['email'], "Presupuesto", $message, $headers, $file);
 
     //Mandamos email al administrador
-    $headers[] = 'Reply-to: '.$_REQUEST['phone'];
+    $headers[] = 'Reply-to: '.$_REQUEST['email'];
     $message = "<b>Nombre:</b> ".$_REQUEST['fullname']."<br/>\n".
-    "<b>Teléfono:</b> ".$_REQUEST['phone']."<br/>\n".
-    "<b>Email:</b> ".$_REQUEST['email']."<br/>\n".
-    "<b>Provincia:</b> ".$_REQUEST['state']."<br/><br/><br/>\n".$html;
-    wp_mail('jorge@enutt.net', "Solicitud de presupuesto", $message, $headers, $file);
+      "<b>Teléfono:</b> ".$_REQUEST['phone']."<br/>\n".
+      "<b>Email:</b> ".$_REQUEST['email']."<br/>\n".
+      "<b>Provincia:</b> ".$_REQUEST['state']."<br/><br/><br/>\n".$html;
+    foreach (explode(",", get_option("_calc_pb_send_emails")) as $admin_email) {
+      $admin_email = trim($admin_email);
+      if(is_email($admin_email)) wp_mail($admin_email, "Solicitud de presupuesto", $message, $headers, $file);
+    }
+    //Borramos el PDF
     unlink($file);
   } else { ?>
     <form method="post">
@@ -218,4 +213,38 @@ function calc_pb_shortcode ($atts, $content) {
     } 
   </style>
   <?php return ob_get_clean();
+}
+
+
+/* Libs */
+function calc_pb_generate_pdf ($html) {
+  $pdf = new \Mpdf\Mpdf();
+  $pagecount = $pdf->SetSourceFile(__DIR__ . '/dossier.pdf');
+  for ($i=1; $i<=$pagecount; $i++) {
+    $import_page = $pdf->ImportPage($i);
+    $pdf->UseTemplate($import_page);
+    if ($i < $pagecount) $pdf->AddPage();
+  }
+  $pdf->AddPage();
+  $pdf->WriteHTML($html);
+  $pdf->SetTitle(sprintf(__("Presupuesto para %s %s", "calc-pb"), $_REQUEST['fullname'], date("Y/m/d H:i")));
+  $pdf->SetAuthor("PubliBicis");
+  $file = __DIR__ .'/presupuesto-'.hash('ripemd160', date("YmdHis").rand(1, 1000000)).'.pdf';
+  $pdf->Output($file,'F');
+  return $file;
+}
+
+function calc_pb_create_clientify_contact ($email, $name, $phone) {
+  $contact = new contactClientify($email, true); //Si no existe se crea
+  $contact->setFirstName($name);
+  foreach (explode(",", get_option("_calc_pb_clientify_tags")) as $tag) {
+    $tag = trim($tag);
+    if(!$contact->hasTag($tag)) $contact->addTag($tag);
+  }
+  if(!$contact->hasphone($phone)) {
+    $phone = str_replace([" ", "-"], "", $phone);
+    $contact->addPhone((str_contains("+34", $phone) ? "" : "+34").$phone, 1);
+  }
+  $contact->update();
+  return;
 }

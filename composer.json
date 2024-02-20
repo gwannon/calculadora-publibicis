@@ -1,5 +1,12 @@
 {
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:gwannon/PHPClientifyAPI.git"
+        }
+    ],
     "require": {
+        "gwannon/phpclientifyapi": "dev-main",
         "mpdf/mpdf": "^8.2"
     }
 }
