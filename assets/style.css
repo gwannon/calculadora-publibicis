@@ -3,6 +3,12 @@ form#cp-form input[type=checkbox] {
   display: none;
 }
 
+form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3, #cp-step4) {
+	min-height: 264px;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
 form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label {
   border: 2px solid #f0f0f0;
   padding: 20px;
@@ -19,6 +25,10 @@ form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label {
   justify-content: center;
   flex-direction: column;
   align-items: center;
+}
+
+form#cp-form div#cp-step1 label span {
+  display: none;
 }
 
 form#cp-form div#cp-step3 label {
@@ -49,7 +59,7 @@ form#cp-form div.cp-step {
 }
 
 form#cp-form div.cp-step.current {
-  display: block;
+	display: flex;
 }
 
 form#cp-form div.cp-step > div:nth-of-type(1) {

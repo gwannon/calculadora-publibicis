@@ -37,7 +37,7 @@ function calc_pb_create_clientify_contact ($email, $name, $phone) {
 }
 
 function calc_pb_generate_html($timetables, $sizes, $extras, $prices, $total) {
-  $html = '<table border="1" cellpadding="10" cellspacing="0" width="100%">
+  $html = '<table border="1" cellpadding="10" cellspacing="0" width="100%" style="font-family: Arial, Verdana;">
   <thead>
     <tr>
       <th>'.__("Concepto", "calc-pb").'</th>
