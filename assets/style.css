@@ -1,0 +1,165 @@
+form#cp-form input[type=radio],
+form#cp-form input[type=checkbox] {
+  display: none;
+}
+
+form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label {
+  border: 2px solid #f0f0f0;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 100%;
+  color: #000;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  width: calc(33.33% - 10px);
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+form#cp-form div#cp-step3 label {
+  width: calc(50% - 10px);
+}
+
+form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label img {
+  margin-bottom: 10px;
+}
+
+form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label:has(input[type=radio]:checked),
+form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label:has(input[type=checkbox]:checked) {
+  border: 2px solid #0be58e;
+} 
+
+form#cp-form,
+div#cp-thanks {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 30px;
+  max-width: 485px;
+  margin: 0 auto 20px;
+  box-shadow: 5px 5px 0px #989c9f;
+}
+
+form#cp-form div.cp-step {
+  display: none;
+}
+
+form#cp-form div.cp-step.current {
+  display: block;
+}
+
+form#cp-form div.cp-step > div:nth-of-type(1) {
+  text-align: center;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 100%;
+  margin: 0 0 20px 0;
+  color: #000;
+}
+
+form#cp-form div.cp-step > div:nth-of-type(2) {
+  display: flex; 
+  gap: 10px;
+}
+
+form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) > label {
+  width: calc(50% - 10px);
+}
+
+form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) > label > *:is(input[type=text], input[type=email], select) {
+  width: 100%;
+}
+
+form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) > label:last-of-type {
+  display: flex;
+  width: calc(100% - 10px);
+  gap: 10px;
+  font-size: 12px;
+}
+
+form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) > label:last-of-type > input {
+  display: inline-block;
+}
+
+form#cp-form > div.cp-step > button,
+form#cp-form > div.cp-step > input[type=submit] {
+  display: block;
+  min-width: 260px;
+  margin: 20px auto 0;
+  padding: 10px;
+  background-color: #0be58e;
+  transition: background 0.3s;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 100%;
+  border: none;
+}
+
+form#cp-form > div.cp-step button:hover {
+  background-color: #0ad37c;
+}
+
+form#cp-form > div.cp-step:is(#cp-step2, #cp-step3) > div > label {
+  color: #0be58e;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 120%;
+}
+
+form#cp-form > div.cp-step:is(#cp-step2, #cp-step3) > div > label > span {
+  display: block;
+  text-align: center;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 100%;
+  color: #000;
+}
+
+form#cp-form > div.cp-step#cp-step2 > label:last-of-type {
+  border: none;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  color: #0be58e;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 100%;
+  flex-direction: row;
+}
+
+form#cp-form > div.cp-step#cp-step3 img {
+  max-width: 80px;
+}
+
+form#cp-form > div#counter {
+  margin: -40px -40px 20px -40px;
+  padding: 30px;
+  text-align: center;
+  background-color: #f0f0f0;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  color: #000;
+  font-size: 24px;
+  line-height: 120%;
+}
+
+form#cp-form > div#counter > div:nth-child(2){
+  font-size: 28px;
+  font-weight: 700;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+form#cp-form > div#counter > img {
+  max-width: 390px;
+}

@@ -34,17 +34,17 @@ function calc_pb_shortcode ($atts, $content) {
   ob_start(); 
   $prices = get_option("_calc_pb_prices");
   $timetables = [
-    "weekend" => __("Publibicis One (weekend) 3 Dias", "calc-pb"),
-    "workweek" => __("Publibicis One (week) 5 Dias", "calc-pb"),
-    "week" => __("Publibicis One (week) 7 Dias", "calc-pb"),
+    "3-days" => __("3 DÍAS", "calc-pb"),
+    "5-days" => __("5 DÍAS", "calc-pb"),
+    "7-days" => __("7 DÍAS", "calc-pb"),
   ];
   $sizes = [
-    "one" => __("Lona One", "calc-pb"),
-    "plus" => __("Lona + Plus", "calc-pb"),
-    "xl-plus" => __("Lona XL Plus", "calc-pb"),
+    "1200x1770" => __("1200x1770 mm", "calc-pb"),
+    "2340x1770" => __("22340x1770 mm", "calc-pb"),
+    "1770x1770" => __("1770x1770 mm", "calc-pb"),
   ];
   $extras = [
-    "flyers" => __("Flyers (1.000 uns)", "calc-pb"),
+    "flyers" => __("Flyers <span>1.000 uds.</span>", "calc-pb"),
     "design" => __("Diseño de la lona", "calc-pb")
   ];
 
@@ -60,13 +60,13 @@ function calc_pb_shortcode ($atts, $content) {
     $html = calc_pb_generate_html($timetables, $sizes, $extras, $prices, $total);
 
     //Mostramos el mensaje de gracias
-    echo apply_filters("the_content", stripslashes(get_option('_calc_pb_afterform_message')));
+    echo "<div id='cp-thanks'>".apply_filters("the_content", stripslashes(get_option('_calc_pb_afterform_message')))."</div>";
 
     //Metemos el usuario en Clientify y añadimos etiqueta #publibicis #form-publibicis 
     calc_pb_create_clientify_contact ($_REQUEST['email'], $_REQUEST['fullname'], $_REQUEST['phone']);
 
     //Generamos el PDF del presupuesto
-    $file = calc_pb_generate_pdf($html);
+    $file = calc_pb_generate_pdf($html."<br><br>".get_option('_calc_pb_conditions'));
    
     //Mandamos email con el presupuesto
     $headers[] = 'MIME-Version: 1.0';
@@ -88,66 +88,84 @@ function calc_pb_shortcode ($atts, $content) {
     //Borramos el PDF
     unlink($file);
   } else { ?>
-    <form method="post">
-      <?php _e("Tipo de semana", "calc-pb"); ?>
-      <div style="display: flex; gap: 10px;">
-        <?php $control = 0; $control = 0;foreach ($timetables as $label => $text) { ?> 
-          <label>
-            <input type="radio" name="days" value="<?=$label?>"<?=((isset($_REQUEST['days']) && $label == $_REQUEST['days']) || (!isset($_REQUEST['days']) && $control == 0) ? " checked='checked'" : "")?> required>
-            <img src="<?=plugin_dir_url( __FILE__ );?>images/<?=$label?>.jpg" alt="<?=$text?>" />
-            <?=$text?>
-          </label>
-        <?php $control ++; } ?>
+    <form id="cp-form" method="post">
+      <div id="counter">
+        <div>¡PSS! ¿TIENES UN MIN?</div>
+        <div>Calcula el presupuesto de tu campaña.</div> 
+        <img src="/wp-content/plugins/calculadora-publibicis/images/1.svg">
       </div>
-      <label>
-        <select name="weeks">
-          <?php for($i = 1; $i <= 10; $i++) { ?><option value="<?=$i?>"<?=((isset($_REQUEST['weeks']) && $i == $_REQUEST['weeks']) || (!isset($_REQUEST['weeks']) && $control == 0) ? " selected='selected'" : "")?>><?=$i?></option><?php } ?>
-        </select>
-        <?php _e("Número de semanas", "calc-pb"); ?>
-      </label>
-      <hr>
-      <?php _e("Tamaño lona", "calc-pb"); ?>
-      <div style="display: flex; gap: 10px;">
-        <?php $control = 0; foreach ($sizes as $label => $text) { ?> 
-          <label>
-            <input type="radio" name="size" value="<?=$label?>"<?=((isset($_REQUEST['size']) && $label == $_REQUEST['size']) || (!isset($_REQUEST['size']) && $control == 0) ? " checked='checked'" : "")?> required>
-            <img src="<?=plugin_dir_url( __FILE__ );?>images/<?=$label?>.jpg" alt="<?=$text?>" />
-            <?=$text?>
-          </label>
-        <?php $control ++; } ?>
+      <div id="cp-step1" class="cp-step current">
+        <div><?php _e("Tamaño de la lona", "calc-pb"); ?></div>
+        <div>
+          <?php $control = 0; foreach ($sizes as $label => $text) { ?> 
+            <label>
+              <input type="radio" name="size" value="<?=$label?>"<?=((isset($_REQUEST['size']) && $label == $_REQUEST['size']) || (!isset($_REQUEST['size']) && $control == 0) ? " checked='checked'" : "")?> required>
+              <img src="<?=plugin_dir_url( __FILE__ );?>images/<?=$label?>.svg" alt="<?=$text?>" />
+              <?=$text?>
+            </label>
+          <?php $control ++; } ?>
+        </div>
+        <button class="next"><?php _e("Siguiente", "calc-pb"); ?></button>
       </div>
-      <hr>
-      <?php _e("Opciones", "calc-pb"); ?>
-      <div style="display: flex; gap: 10px;">
-        <?php $control = 0; foreach ($extras as $label => $text) { ?> 
-          <label>
-            <input type="checkbox" name="<?=$label?>" value="1"<?=(isset($_REQUEST[$label]) && 1 == $_REQUEST[$label] ? " checked='checked'" : "")?>>
-            <img src="<?=plugin_dir_url( __FILE__ );?>images/<?=$label?>.jpg" alt="<?=$text?>" />
-            <?=$text?>
-          </label>
-        <?php $control ++; } ?>
+
+      <div id="cp-step2" class="cp-step">
+        <div><?php _e("Duración de campaña", "calc-pb"); ?></div>
+        <div>
+          <?php $control = 0; $control = 0;foreach ($timetables as $label => $text) { ?> 
+            <label>
+              <input type="radio" name="days" value="<?=$label?>"<?=((isset($_REQUEST['days']) && $label == $_REQUEST['days']) || (!isset($_REQUEST['days']) && $control == 0) ? " checked='checked'" : "")?> required>
+              <?=$text?>
+            </label>
+          <?php $control ++; } ?>
+        </div>
+        <label>
+          <?php _e("Número de semanas", "calc-pb"); ?>
+          <select name="weeks">
+            <?php for($i = 1; $i <= 10; $i++) { ?><option value="<?=$i?>"<?=((isset($_REQUEST['weeks']) && $i == $_REQUEST['weeks']) || (!isset($_REQUEST['weeks']) && $control == 0) ? " selected='selected'" : "")?>><?=$i?></option><?php } ?>
+          </select>
+        </label>
+        <button class="next"><?php _e("Siguiente", "calc-pb"); ?></button>
       </div>
-      <hr>
-      <label>
-        <?php _e("Nombre completo", "calc-pb"); ?>*
-        <input type="text" name="fullname" value="<?=(isset($_REQUEST['fullname']) && $_REQUEST['fullname'] != '' ? strip_tags($_REQUEST['fullname']) : "")?>" required>
-      </label>
-      <label>
-        <?php _e("Teléfono", "calc-pb"); ?>*
-        <input type="phone" name="phone" value="<?=(isset($_REQUEST['phone']) && $_REQUEST['phone'] != '' ? strip_tags($_REQUEST['phone']) : "")?>" required>
-      </label>
-      <label>
-        <?php _e("Email", "calc-pb"); ?>*
-        <input type="email" name="email" value="<?=(isset($_REQUEST['email']) && $_REQUEST['email'] != '' ? strip_tags($_REQUEST['email']) : "")?>" required>
-      </label>
-      <label>
-        <select name="state" required>
-          <?php foreach($states as $state) { ?> 
-            <option value="<?=$state?>"<?=(isset($_REQUEST['state']) && $state == $_REQUEST['state'] ? " selected='selected'" : "")?>><?=$state?></option>
-          <?php } ?> 
-        </select>
-      </label>
-      <input type="submit" name="calculate" value="<?php _e("Solicitar presupuesto", "calc-pb"); ?>">
+     
+      <div id="cp-step3" class="cp-step">
+        <div><?php _e("Opciones", "calc-pb"); ?></div>
+        <div>
+          <?php $control = 0; foreach ($extras as $label => $text) { ?> 
+            <label>
+              <input type="checkbox" name="<?=$label?>" value="1"<?=(isset($_REQUEST[$label]) && 1 == $_REQUEST[$label] ? " checked='checked'" : "")?>>
+              <img src="<?=plugin_dir_url( __FILE__ );?>images/<?=$label?>.svg" alt="<?=$text?>" />
+              <?=$text?>
+            </label>
+          <?php $control ++; } ?>
+        </div>
+        <button class="next"><?php _e("Siguiente", "calc-pb"); ?></button>
+      </div>
+
+      <div id="cp-step4" class="cp-step">
+        <div><?php _e("Rellena tus datos", "calc-pb"); ?></div>
+        <div>
+          <label>
+            <input type="text" name="fullname" placeholder="<?php _e("Nombre completo", "calc-pb"); ?>*" value="<?=(isset($_REQUEST['fullname']) && $_REQUEST['fullname'] != '' ? strip_tags($_REQUEST['fullname']) : "")?>" required>
+          </label>
+          <label>
+            <input type="text" name="phone" placeholder="<?php _e("Teléfono", "calc-pb"); ?>*" value="<?=(isset($_REQUEST['phone']) && $_REQUEST['phone'] != '' ? strip_tags($_REQUEST['phone']) : "")?>" required>
+          </label>
+          <label>
+            <input type="email" name="email" placeholder="<?php _e("Email", "calc-pb"); ?>*" value="<?=(isset($_REQUEST['email']) && $_REQUEST['email'] != '' ? strip_tags($_REQUEST['email']) : "")?>" required>
+          </label>
+          <label>
+            <select name="state" required>
+              <?php foreach($states as $state) { ?> 
+                <option value="<?=$state?>"<?=(isset($_REQUEST['state']) && $state == $_REQUEST['state'] ? " selected='selected'" : "")?>><?=$state?></option>
+              <?php } ?> 
+            </select>
+          </label>
+          <label>
+            <input type="checkbox" name="privacy" value="1" required> <p><?php _e("Acepto la <a href='/politica-privacidad/'>política de privacidad</a>.", ''); ?></p>
+          </label>
+        </div>
+        <button type="submit" name="calculate"><?php _e("Solicitar presupuesto", "calc-pb"); ?></button>
+      </div>
     </form>
   <?php } ?>
   <script>

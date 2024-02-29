@@ -8,14 +8,14 @@ function calc_pb_plugin_menu() {
 
 function calc_pb_page_settings() { 
 	$prices = [
-		"weekend" => __("Publibicis One (weekend) 3 Dias", "calc-pb"),
-		"workweek" => __("Publibicis One (week) 5 Dias", "calc-pb"),
-		"week" => __("Publibicis One (week) 7 Dias", "calc-pb"),
-		"one" => __("Lona One", "calc-pb"),
-		"plus" => __("Lona + Plus", "calc-pb"),
-		"xl-plus" => __("Lona XL Plus", "calc-pb"),
-		"flyers" => __("Flyers (1.000 uns)", "calc-pb"),
-		"design" => __("Diseño de la lona", "calc-pb")
+    "3-days" => __("3 DÍAS", "calc-pb"),
+    "5-days" => __("5 DÍAS", "calc-pb"),
+    "7-days" => __("7 DÍAS", "calc-pb"),
+    "1200x1770" => __("Lona 1200x1770 mm", "calc-pb"),
+    "2340x1770" => __("Lona 22340x1770 mm", "calc-pb"),
+    "1770x1770" => __("Lona 1770x1770 mm", "calc-pb"),
+    "flyers" => __("Flyers (1.000 uns)", "calc-pb"),
+    "design" => __("Diseño de la lona", "calc-pb")
 	];
 	?><h1><?php _e("Configuración", 'calc-pb'); ?></h1><?php 
 	if(isset($_REQUEST['send']) && $_REQUEST['send'] != '') { 
@@ -28,6 +28,7 @@ function calc_pb_page_settings() {
 		update_option('_calc_pb_email_html', $_POST['_calc_pb_email_html']);
 		update_option('_calc_pb_afterform_message', $_POST['_calc_pb_afterform_message']);
 		update_option('_calc_pb_dossier_pdf_id', $_POST['_calc_pb_dossier_pdf_id']);
+		update_option('_calc_pb_conditions', $_POST['_calc_pb_conditions']);
 	} ?>
 	<form method="post">
     <b><?php _e("Clientify API key", 'calc-pb'); ?>:</b><br/>
@@ -39,9 +40,12 @@ function calc_pb_page_settings() {
 			<b><?=$price?></b><br/>
 			<input type="number" name="_calc_pb_prices[<?=$label?>]" value="<?php echo $current_prices[$label]; ?>" min-value="0" style="width: 100px; text-align: right;" />&euro;<br/>
 		<?php } ?>
+		<b><?php _e("Condiciones", 'calc-pb'); ?>:</b><br/>
+		<?php $settings = array( 'media_buttons' => true, 'quicktags' => true, 'textarea_rows' => 5 );
+			wp_editor(stripslashes(get_option('_calc_pb_conditions')), '_calc_pb_conditions', $settings ); ?>
 		<h2><?php _e("Formulario", 'calc-pb'); ?>:</h2>
 		<b><?php _e("Mensaje despues de rellenar el formulario de presupuesto", 'calc-pb'); ?>:</b><br/>
-		<?php $settings = array( 'media_buttons' => true, 'quicktags' => true, 'textarea_rows' => 5 );
+		<?php 
 			wp_editor(stripslashes(get_option('_calc_pb_afterform_message')), '_calc_pb_afterform_message', $settings ); ?>
 
 
