@@ -39,9 +39,9 @@ function calc_pb_shortcode ($atts, $content) {
     "7-days" => __("7 DÍAS", "calc-pb"),
   ];
   $sizes = [
-    "1200x1770" => __("1200x1770 mm", "calc-pb"),
-    "2340x1770" => __("22340x1770 mm", "calc-pb"),
-    "1770x1770" => __("1770x1770 mm", "calc-pb"),
+    "1200x1770" => __("<span>Lona de </span>1200x1770 mm", "calc-pb"),
+    "2340x1770" => __("<span>Lona de </span>22340x1770 mm", "calc-pb"),
+    "1770x1770" => __("<span>Lona de </span>1770x1770 mm", "calc-pb"),
   ];
   $extras = [
     "flyers" => __("Flyers <span>1.000 uds.</span>", "calc-pb"),
@@ -71,7 +71,8 @@ function calc_pb_shortcode ($atts, $content) {
     //Mandamos email con el presupuesto
     $headers[] = 'MIME-Version: 1.0';
     $headers[] = 'Content-type: text/html; charset=utf-8';
-    $message = apply_filters("the_content", stripslashes(str_replace("[HTML]", $html, get_option('_calc_pb_email_html'))));
+    $message = str_replace("[HTML]", $html, get_option('_calc_pb_email_html'));
+    $message = apply_filters("the_content", stripslashes(str_replace("[CONDITIONS]", get_option('_calc_pb_conditions'), $message)));
     wp_mail($_REQUEST['email'], get_option('_calc_pb_email_subject'), $message, $headers, $file);
 
     //Mandamos email al administrador
