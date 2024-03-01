@@ -103,8 +103,8 @@ function calc_pb_shortcode ($atts, $content) {
   } else { ?>
     <form id="cp-form" method="post">
       <div id="counter">
-        <div>¡PSS! ¿TIENES UN MIN?</div>
-        <div>Calcula el presupuesto de tu campaña.</div> 
+        <div><?php _e("¡PSS! ¿TIENES UN MIN?", "calc-pb"); ?></div>
+        <div><?php _e("Calcula el presupuesto de tu campaña.", "calc-pb"); ?></div> 
         <img src="/wp-content/plugins/calculadora-publibicis/images/1.svg">
       </div>
       <div id="cp-step1" class="cp-step current">
