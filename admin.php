@@ -30,6 +30,7 @@ function calc_pb_page_settings() {
 		update_option('_calc_pb_dossier_pdf_id', $_POST['_calc_pb_dossier_pdf_id']);
 		update_option('_calc_pb_conditions', $_POST['_calc_pb_conditions']);
 	} ?>
+	<a href="<?php echo get_admin_url(); ?>options-general.php?page=calc-pb&csv=true" class="button"><?php _e("Exportar a CSV", 'calc-pb'); ?></a><br/><br/>
 	<form method="post">
     <b><?php _e("Clientify API key", 'calc-pb'); ?>:</b><br/>
 		<input type="text" name="_calc_pb_clientify_api_key" value="<?php echo get_option("_calc_pb_clientify_api_key"); ?>" style="width: calc(100% - 20px);" /><br/>
@@ -47,8 +48,6 @@ function calc_pb_page_settings() {
 		<b><?php _e("Mensaje despues de rellenar el formulario de presupuesto", 'calc-pb'); ?>:</b><br/>
 		<?php 
 			wp_editor(stripslashes(get_option('_calc_pb_afterform_message')), '_calc_pb_afterform_message', $settings ); ?>
-
-
 		<b><?php _e("PDF dossier", 'calc-pb'); ?>:</b><br/>
 		<select name="_calc_pb_dossier_pdf_id">
 			<option value="">--</option>
@@ -65,13 +64,6 @@ function calc_pb_page_settings() {
 					<option value="<?=$pdf->ID?>"<?=($dossier_id == $pdf->ID ? " selected='selected'": "")?>><?=basename($pdf->guid)?></option>
 				<?php } ?>
 		</select>
-
-
-
-
-
-
-
 		<h2><?php _e("Emails", 'calc-pb'); ?>:</h2>
 		<b><?php _e("Emails de aviso", 'calc-pb'); ?>:<br/><small>(<?php _e("separados por comas", 'calc-pb'); ?>)</small></b><br/>
 		<input type="text" name="_calc_pb_send_emails" value="<?php echo get_option("_calc_pb_send_emails"); ?>" style="width: calc(100% - 20px);" /><br/><br/>
@@ -84,4 +76,29 @@ function calc_pb_page_settings() {
 		<br/><input type="submit" name="send" class="button button-primary" min-value=" value="<?php _e('Guardar', 'calc-pb'); ?>" />
 	</form>
 	<?php
+}
+
+//Exportar a CSV ---------------------
+add_action( 'admin_init', 'calc_pb_page_export_to_CSV', 1 );
+function calc_pb_page_export_to_CSV() {
+  if (isset($_GET['page']) && $_GET['page'] == 'calc-pb' && isset($_GET['csv']) && $_GET['csv'] == 'true') {
+		$now = gmdate("D, d M Y H:i:s");
+		header("Expires: Tue, 03 Jul 2001 06:00:00 GMT");
+		header("Cache-Control: max-age=0, no-cache, must-revalidate, proxy-revalidate");
+		header("Last-Modified: {$now} GMT");
+
+		// force download
+		header("Content-Description: File Transfer");
+		header("Content-Encoding: UTF-8");
+		header("Content-Type: text/csv; charset=UTF-8");
+		header("Content-Type: application/force-download");
+		header("Content-Type: application/octet-stream");
+		header("Content-Type: application/download");
+
+		// disposition / encoding on response body
+		header("Content-Disposition: attachment;filename=presupuestos-".date("Y-m-d_His").".csv");
+		header("Content-Transfer-Encoding: binary");
+		echo file_get_contents(__DIR__ . '/csv/presupuestos.csv');
+		die;
+  }
 }

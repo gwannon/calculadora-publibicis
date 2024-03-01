@@ -86,6 +86,18 @@ function calc_pb_shortcode ($atts, $content) {
       if(is_email($admin_email)) wp_mail($admin_email, "Solicitud de presupuesto", $message, $headers, $file);
     }
 
+    //Guardamos en CSV
+    unset($_REQUEST['calculate']);
+    unset($_REQUEST['privacy']);
+    $f=fopen(__DIR__."/csv/presupuestos.csv", "a+");
+    $csv['fecha'] = date("Y-m-d H:i:s");
+    $csv['url'] = get_the_permalink();
+    foreach($_REQUEST as $item => $value) {
+      $csv[$item] = $value;
+    }
+    fputcsv($f, $csv);
+    fclose($f);
+
     //Borramos el PDF
     unlink($file);
   } else { ?>
