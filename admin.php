@@ -17,6 +17,13 @@ function calc_pb_page_settings() {
     "flyers" => __("Flyers (1.000 uns)", "calc-pb"),
     "design" => __("Diseño de la lona", "calc-pb")
 	];
+
+	$sizes = [ 
+		"1200x1770" => __("Lona 1200x1770 mm", "calc-pb"),
+		"2340x1770" => __("Lona 22340x1770 mm", "calc-pb"),
+		"1770x1770" => __("Lona 1770x1770 mm", "calc-pb")
+	];
+
 	?><h1><?php _e("Configuración", 'calc-pb'); ?></h1><?php 
 	if(isset($_REQUEST['send']) && $_REQUEST['send'] != '') { 
 		?><p style="border: 1px solid green; color: green; text-align: center;"><?php _e("¡Datos guardados correctamente!", 'calc-pb'); ?></p><?php
@@ -27,7 +34,8 @@ function calc_pb_page_settings() {
 		update_option('_calc_pb_email_subject', $_POST['_calc_pb_email_subject']);
 		update_option('_calc_pb_email_html', $_POST['_calc_pb_email_html']);
 		update_option('_calc_pb_afterform_message', $_POST['_calc_pb_afterform_message']);
-		update_option('_calc_pb_dossier_pdf_id', $_POST['_calc_pb_dossier_pdf_id']);
+
+		foreach ($sizes as $label => $size) update_option('_calc_pb_dossier_'.$label.'_pdf_id', $_POST['_calc_pb_dossier_'.$label.'_pdf_id']);
 		update_option('_calc_pb_conditions', $_POST['_calc_pb_conditions']);
 	} ?>
 	<a href="<?php echo get_admin_url(); ?>options-general.php?page=calc-pb&csv=true" class="button"><?php _e("Exportar a CSV", 'calc-pb'); ?></a><br/><br/>
@@ -49,9 +57,8 @@ function calc_pb_page_settings() {
 		<?php 
 			wp_editor(stripslashes(get_option('_calc_pb_afterform_message')), '_calc_pb_afterform_message', $settings ); ?>
 		<b><?php _e("PDF dossier", 'calc-pb'); ?>:</b><br/>
-		<select name="_calc_pb_dossier_pdf_id">
-			<option value="">--</option>
-			<?php $query_images_args = array(
+
+		<?php $query_images_args = array(
 					'post_type'      => 'attachment',
 					'post_mime_type' => 'application/pdf',
 					'post_status'    => 'inherit',
@@ -59,11 +66,19 @@ function calc_pb_page_settings() {
 				);
 
 				$query_images = new WP_Query( $query_images_args );
-				$dossier_id = get_option('_calc_pb_dossier_pdf_id');
+		?>
+		<?php 
+
+		foreach ($sizes as $label => $size) { ?>
+		<select name="_calc_pb_dossier_<?php echo $label; ?>_pdf_id">
+			<option value="">--</option>
+				<?php 
+				$dossier_id = get_option('_calc_pb_dossier_'.$label.'_pdf_id');
 				foreach ( $query_images->posts as $pdf ) { ?>
 					<option value="<?=$pdf->ID?>"<?=($dossier_id == $pdf->ID ? " selected='selected'": "")?>><?=basename($pdf->guid)?></option>
 				<?php } ?>
-		</select>
+		</select><?php echo $size; ?><br>
+		<?php } ?>
 		<h2><?php _e("Emails", 'calc-pb'); ?>:</h2>
 		<b><?php _e("Emails de aviso", 'calc-pb'); ?>:<br/><small>(<?php _e("separados por comas", 'calc-pb'); ?>)</small></b><br/>
 		<input type="text" name="_calc_pb_send_emails" value="<?php echo get_option("_calc_pb_send_emails"); ?>" style="width: calc(100% - 20px);" /><br/><br/>

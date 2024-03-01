@@ -4,9 +4,9 @@ use Gwannon\PHPClientifyAPI\contactClientify;
 use Mpdf\Mpdf;
 
 /* Libs */
-function calc_pb_generate_pdf ($html) {
+function calc_pb_generate_pdf ($html, $size) {
   $pdf = new Mpdf();
-  $pagecount = $pdf->SetSourceFile(get_attached_file(get_option('_calc_pb_dossier_pdf_id')));
+  $pagecount = $pdf->SetSourceFile(get_attached_file(get_option('_calc_pb_dossier_'.$size.'_pdf_id')));
   for ($i=1; $i<=$pagecount; $i++) {
     $import_page = $pdf->ImportPage($i);
     $pdf->UseTemplate($import_page);

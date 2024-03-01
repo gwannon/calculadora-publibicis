@@ -21,10 +21,18 @@ form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label {
   display: flex;
   flex-wrap: wrap;
   align-content: center;
-  width: calc(33.33% - 10px);
+  width: calc(100% - 10px);
   justify-content: center;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+@media (min-width: 800px) {
+  form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label {
+    width: calc(33.33% - 52px);
+  }
 }
 
 form#cp-form div#cp-step1 label span {
@@ -32,11 +40,12 @@ form#cp-form div#cp-step1 label span {
 }
 
 form#cp-form div#cp-step3 label {
-  width: calc(50% - 10px);
+  width: calc(50% - 49px);
 }
 
 form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label img {
   margin-bottom: 10px;
+  max-width: 100px;
 }
 
 form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label:has(input[type=radio]:checked),
@@ -74,6 +83,7 @@ form#cp-form div.cp-step > div:nth-of-type(1) {
 form#cp-form div.cp-step > div:nth-of-type(2) {
   display: flex; 
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) {
@@ -82,8 +92,16 @@ form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) {
 }
 
 form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) > label {
-  width: calc(50% - 10px);
+  width: calc(100% - 10px);
 }
+
+@media (min-width: 800px) {
+  form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) > label {
+    width: calc(50% - 10px);
+  }
+}
+
+
 
 form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) > label > *:is(input[type=text], input[type=email], select) {
   width: 100%;
@@ -142,9 +160,16 @@ form#cp-form > div.cp-step#cp-step2 > label:last-of-type {
   gap: 10px;
   color: #0be58e;
   font-weight: 700;
-  font-size: 22px;
+  font-size: 15px;
   line-height: 100%;
   flex-direction: row;
+  padding: 20px 0px;
+}
+
+@media (min-width: 800px) {
+  form#cp-form > div.cp-step#cp-step2 > label:last-of-type {
+    font-size: 22px;
+  }
 }
 
 form#cp-form > div.cp-step#cp-step3 img {
