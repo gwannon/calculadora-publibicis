@@ -101,7 +101,7 @@ function calc_pb_shortcode ($atts, $content) {
     //Borramos el PDF
     unlink($file);
   } else { ?>
-    <form id="cp-form" method="post">
+    <form id="cp-form" method="post" action="<?php echo get_the_permalink(); ?>?gracias">
       <div id="counter">
         <div><?php _e("¡PSS! ¿TIENES UN MIN?", "calc-pb"); ?></div>
         <div><?php _e("Calcula el presupuesto de tu campaña.", "calc-pb"); ?></div> 
