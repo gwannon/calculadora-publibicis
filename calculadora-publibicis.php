@@ -66,7 +66,7 @@ function calc_pb_shortcode ($atts, $content) {
     calc_pb_create_clientify_contact ($_REQUEST['email'], $_REQUEST['fullname'], $_REQUEST['phone']);
 
     //Generamos el PDF del presupuesto
-    $file = calc_pb_generate_pdf($html."<br><br>".get_option('_calc_pb_conditions'), $_REQUEST['size']);
+    $file = calc_pb_generate_pdf($html."<br><br>".stripslashes(get_option('_calc_pb_conditions')), $_REQUEST['size']);
    
     //Mandamos email con el presupuesto
     $headers[] = 'MIME-Version: 1.0';

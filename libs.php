@@ -5,7 +5,21 @@ use Mpdf\Mpdf;
 
 /* Libs */
 function calc_pb_generate_pdf ($html, $size) {
-  $pdf = new Mpdf();
+  $pdf = new Mpdf([
+    //'format' => 'A4',
+    //'margin_header' => 30,     // 30mm not pixel
+    //'margin_footer' => 30,     // 10mm
+    //'setAutoBottomMargin' => 'pad',
+    //'setAutoTopMargin' => 'pad',
+    'fontDir' => __DIR__ . '/fonts/',
+    'fontdata' => [
+      'poppins' => [
+          'R' => 'Poppins-Regular.ttf',
+          'I' => 'Poppins-Italic.ttf'
+      ]
+    ],
+    'default_font' => 'poppins'
+  ]);
   $pagecount = $pdf->SetSourceFile(get_attached_file(get_option('_calc_pb_dossier_'.$size.'_pdf_id')));
   for ($i=1; $i<=$pagecount; $i++) {
     $import_page = $pdf->ImportPage($i);
@@ -13,7 +27,7 @@ function calc_pb_generate_pdf ($html, $size) {
     if ($i < $pagecount) $pdf->AddPage();
   }
   $pdf->AddPage();
-  $pdf->WriteHTML($html);
+  $pdf->WriteHTML($html."<style>body { background-color: #ececec; }</style>");
   $pdf->SetTitle(sprintf(__("Presupuesto para %s %s", "calc-pb"), $_REQUEST['fullname'], date("Y/m/d H:i")));
   $pdf->SetAuthor("PubliBicis");
   $file = __DIR__ .'/presupuesto-'.hash('ripemd160', date("YmdHis").rand(1, 1000000)).'.pdf';
@@ -37,7 +51,7 @@ function calc_pb_create_clientify_contact ($email, $name, $phone) {
 }
 
 function calc_pb_generate_html($timetables, $sizes, $extras, $prices, $total) {
-  $html = '<table border="1" cellpadding="10" cellspacing="0" width="100%" style="font-family: Arial, Verdana;">
+  $html = '<table class="presu" border="0" cellpadding="10" cellspacing="0" width="100%" style="font-family: Poppins;">
   <thead>
     <tr>
       <th>'.__("Concepto", "calc-pb").'</th>
@@ -74,6 +88,6 @@ function calc_pb_generate_html($timetables, $sizes, $extras, $prices, $total) {
         <td colspan="2" style="text-align: right;">'.number_format($total, 2, ",", ".")." €".'</td>
       </tr>
     </tbody>
-  </table>';
+  </table><style>table.presu { border-collapse: collapse;} table.presu td { border: 1px solid #000000; }</style>';
   return $html;
 }
