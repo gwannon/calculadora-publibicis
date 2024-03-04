@@ -12,7 +12,7 @@ function calc_pb_page_settings() {
     "5-days" => __("5 DÍAS", "calc-pb"),
     "7-days" => __("7 DÍAS", "calc-pb"),
     "1200x1770" => __("Lona 1200x1770 mm", "calc-pb"),
-    "2340x1770" => __("Lona 22340x1770 mm", "calc-pb"),
+    "2340x1770" => __("Lona 2340x1770 mm", "calc-pb"),
     "1770x1770" => __("Lona 1770x1770 mm", "calc-pb"),
     "flyers" => __("Flyers (1.000 uns)", "calc-pb"),
     "design" => __("Diseño de la lona", "calc-pb")
@@ -20,7 +20,7 @@ function calc_pb_page_settings() {
 
 	$sizes = [ 
 		"1200x1770" => __("Lona 1200x1770 mm", "calc-pb"),
-		"2340x1770" => __("Lona 22340x1770 mm", "calc-pb"),
+		"2340x1770" => __("Lona 2340x1770 mm", "calc-pb"),
 		"1770x1770" => __("Lona 1770x1770 mm", "calc-pb")
 	];
 

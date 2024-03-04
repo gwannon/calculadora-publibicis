@@ -40,7 +40,7 @@ function calc_pb_shortcode ($atts, $content) {
   ];
   $sizes = [
     "1200x1770" => __("<span>Lona de </span>1200x1770 mm", "calc-pb"),
-    "2340x1770" => __("<span>Lona de </span>22340x1770 mm", "calc-pb"),
+    "2340x1770" => __("<span>Lona de </span>2340x1770 mm", "calc-pb"),
     "1770x1770" => __("<span>Lona de </span>1770x1770 mm", "calc-pb"),
   ];
   $extras = [
