@@ -34,14 +34,14 @@ function calc_pb_shortcode ($atts, $content) {
   ob_start(); 
   $prices = get_option("_calc_pb_prices");
   $timetables = [
+    "1-day" => __("1 DÍA", "calc-pb"),
     "3-days" => __("3 DÍAS", "calc-pb"),
-    "5-days" => __("5 DÍAS", "calc-pb"),
-    "7-days" => __("7 DÍAS", "calc-pb"),
+    "4-days" => __("5 DÍAS", "calc-pb"),
   ];
   $sizes = [
-    "1200x1770" => __("<span>Lona de </span>1200x1770 mm", "calc-pb"),
-    "2340x1770" => __("<span>Lona de </span>2340x1770 mm", "calc-pb"),
-    "1770x1770" => __("<span>Lona de </span>1770x1770 mm", "calc-pb"),
+    "1200x1770" => __("<span>Lona de </span>ONE 1200x1770 mm", "calc-pb"),
+    "1770x1770" => __("<span>Lona de </span>PLUS 1770x1770 mm", "calc-pb"),
+    "2340x1770" => __("<span>Lona de </span>XL PLUS 2340x1770 mm", "calc-pb"),
   ];
   $extras = [
     "flyers" => __("Flyers <span>1.000 uds.</span>", "calc-pb"),
@@ -51,7 +51,12 @@ function calc_pb_shortcode ($atts, $content) {
   $states = ['Álava/Araba', "Bizkaia", "Guipuzkoa", "Cantabria", "Navarra", "Rioja"];
   
   if(isset($_REQUEST['calculate'])) { 
-    $total = $prices[$_REQUEST['size']] + ($_REQUEST['weeks'] * $prices[$_REQUEST['days']]);
+    
+    if($_REQUEST['bikes'] > 1) {
+      $total = ($_REQUEST['bikes'] * $prices[$_REQUEST['size']]) + ($_REQUEST['bikes'] * $prices[$_REQUEST['days']] * 0.85);
+    } else {
+      $total = ($_REQUEST['bikes'] * $prices[$_REQUEST['size']]) + ($_REQUEST['bikes'] * $prices[$_REQUEST['days']]);
+    }
     foreach ($extras as $label => $text) {
       if(isset($_REQUEST[$label]) && $_REQUEST[$label] == 1) {
         $total = $total + $prices[$label];
@@ -66,7 +71,7 @@ function calc_pb_shortcode ($atts, $content) {
     calc_pb_create_clientify_contact ($_REQUEST['email'], $_REQUEST['fullname'], $_REQUEST['phone']);
 
     //Generamos el PDF del presupuesto
-    $file = calc_pb_generate_pdf($html."<br><br>".stripslashes(get_option('_calc_pb_conditions')), $_REQUEST['size']);
+    //$file = calc_pb_generate_pdf($html."<br><br>".stripslashes(get_option('_calc_pb_conditions')), $_REQUEST['size']);
    
     //Mandamos email con el presupuesto
     $headers[] = 'MIME-Version: 1.0';
@@ -132,9 +137,9 @@ function calc_pb_shortcode ($atts, $content) {
           <?php $control ++; } ?>
         </div>
         <label>
-          <?php _e("Número de semanas", "calc-pb"); ?>
-          <select name="weeks">
-            <?php for($i = 1; $i <= 10; $i++) { ?><option value="<?=$i?>"<?=((isset($_REQUEST['weeks']) && $i == $_REQUEST['weeks']) || (!isset($_REQUEST['weeks']) && $control == 0) ? " selected='selected'" : "")?>><?=$i?></option><?php } ?>
+          <?php _e("Número de bicis", "calc-pb"); ?>
+          <select name="bikes">
+            <?php for($i = 1; $i <= 4; $i++) { ?><option value="<?=$i?>"<?=((isset($_REQUEST['bikes']) && $i == $_REQUEST['bikes']) || (!isset($_REQUEST['bikes']) && $control == 0) ? " selected='selected'" : "")?>><?=$i?></option><?php } ?>
           </select>
         </label>
         <button class="next"><?php _e("Siguiente", "calc-pb"); ?></button>

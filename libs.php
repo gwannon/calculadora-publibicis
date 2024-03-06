@@ -29,7 +29,7 @@ function calc_pb_generate_pdf ($html, $size) {
   $pdf->AddPage();
   $pdf->WriteHTML($html."<style>body { background-color: #ececec; }</style>");
   $pdf->SetTitle(sprintf(__("Presupuesto para %s %s", "calc-pb"), $_REQUEST['fullname'], date("Y/m/d H:i")));
-  $pdf->SetAuthor("PubliBicis");
+  $pdf->SetAuthor("URBAN MOBILITY BIKES");
   $file = __DIR__ .'/presupuesto-'.hash('ripemd160', date("YmdHis").rand(1, 1000000)).'.pdf';
   $pdf->Output($file,'F');
   return $file;
@@ -63,16 +63,26 @@ function calc_pb_generate_html($timetables, $sizes, $extras, $prices, $total) {
   <tbody>
     <tr>
       <td>'.$timetables[$_REQUEST['days']].'</td>
-      <td style="text-align: center;">'.$_REQUEST['weeks'].'</td>
+      <td style="text-align: center;">'.$_REQUEST['bikes'].'</td>
       <td style="text-align: right;">'.number_format($prices[$_REQUEST['days']], 2, ",", ".")." €".'</td>
-      <td style="text-align: right;">'.number_format(($_REQUEST['weeks'] * $prices[$_REQUEST['days']]), 2, ",", ".")." €".'</td>
-    </tr>
-    <tr>
-      <td>'.$sizes[$_REQUEST['size']].'</td>
-      <td style="text-align: center;">1</td>
-      <td style="text-align: right;">'.number_format($prices[$_REQUEST['size']], 2, ",", ".")." €".'</td>
-      <td style="text-align: right;">'.number_format($prices[$_REQUEST['size']], 2, ",", ".")." €".'</td>
+      <td style="text-align: right;">'.number_format(($_REQUEST['bikes'] * $prices[$_REQUEST['days']]), 2, ",", ".")." €".'</td>
     </tr>';
+
+  $html .= '<tr>
+      <td>'.$sizes[$_REQUEST['size']].'</td>
+      <td style="text-align: center;">'.$_REQUEST['bikes'].'</td>
+      <td style="text-align: right;">'.number_format($prices[$_REQUEST['size']], 2, ",", ".")." €".'</td>
+      <td style="text-align: right;">'.number_format(($_REQUEST['bikes'] * $prices[$_REQUEST['size']]), 2, ",", ".")." €".'</td>
+    </tr>';
+
+  if($_REQUEST['bikes'] > 1) {
+    $html .= '<tr>
+      <td>'.__("Descuento al contratar 2 o más bicis", "calc-pb").'</td>
+      <td style="text-align: center;">1</td>
+      <td style="text-align: right;">15%</td>
+      <td style="text-align: right;">-'.number_format(($_REQUEST['bikes'] * $prices[$_REQUEST['days']] * 0.15), 2, ",", ".")." €".'</td>
+    </tr>';
+  }
   foreach ($extras as $label => $text) { 
     if(isset($_REQUEST[$label]) && $_REQUEST[$label] == 1) { 
       $html .= '<tr>

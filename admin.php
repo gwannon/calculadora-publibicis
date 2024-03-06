@@ -8,20 +8,20 @@ function calc_pb_plugin_menu() {
 
 function calc_pb_page_settings() { 
 	$prices = [
+    "1-day" => __("1 DÍA", "calc-pb"),
     "3-days" => __("3 DÍAS", "calc-pb"),
     "5-days" => __("5 DÍAS", "calc-pb"),
-    "7-days" => __("7 DÍAS", "calc-pb"),
-    "1200x1770" => __("Lona 1200x1770 mm", "calc-pb"),
-    "2340x1770" => __("Lona 2340x1770 mm", "calc-pb"),
-    "1770x1770" => __("Lona 1770x1770 mm", "calc-pb"),
+    "1200x1770" => __("Lona ONE 1200x1770 mm", "calc-pb"),
+    "1770x1770" => __("Lona PLUS 1770x1770 mm", "calc-pb"),
+    "2340x1770" => __("Lona XL PLUS 2340x1770 mm", "calc-pb"),
     "flyers" => __("Flyers (1.000 uns)", "calc-pb"),
     "design" => __("Diseño de la lona", "calc-pb")
 	];
 
 	$sizes = [ 
-		"1200x1770" => __("Lona 1200x1770 mm", "calc-pb"),
-		"2340x1770" => __("Lona 2340x1770 mm", "calc-pb"),
-		"1770x1770" => __("Lona 1770x1770 mm", "calc-pb")
+		"1200x1770" => __("Lona ONE 1200x1770 mm", "calc-pb"),
+		"1770x1770" => __("Lona PLUS 1770x1770 mm", "calc-pb"),
+		"2340x1770" => __("Lona XL PLUS 2340x1770 mm", "calc-pb"),
 	];
 
 	?><h1><?php _e("Configuración", 'calc-pb'); ?></h1><?php 
