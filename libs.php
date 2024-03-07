@@ -26,6 +26,7 @@ function calc_pb_generate_pdf ($html, $size) {
     $pdf->UseTemplate($import_page);
     if ($i < $pagecount) $pdf->AddPage();
   }
+
   $pdf->AddPage();
   $pdf->WriteHTML($html."<style>body { background-color: #ececec; }</style>");
   $pdf->SetTitle(sprintf(__("Presupuesto para %s %s", "calc-pb"), $_REQUEST['fullname'], date("Y/m/d H:i")));
@@ -37,7 +38,9 @@ function calc_pb_generate_pdf ($html, $size) {
 
 function calc_pb_create_clientify_contact ($email, $name, $phone) {
   $contact = new contactClientify($email, true); //Si no existe se crea
-  $contact->setFirstName($name);
+  $name = explode(' ', $name, 2);
+  $contact->setFirstName($name[0]);
+  $contact->setLastName($name[1]);
   foreach (explode(",", get_option("_calc_pb_clientify_tags")) as $tag) {
     $tag = trim($tag);
     if(!$contact->hasTag($tag)) $contact->addTag($tag);
@@ -62,14 +65,14 @@ function calc_pb_generate_html($timetables, $sizes, $extras, $prices, $total) {
   </thead>
   <tbody>
     <tr>
-      <td>'.$timetables[$_REQUEST['days']].'</td>
+      <td>'.strip_tags($timetables[$_REQUEST['days']]).'</td>
       <td style="text-align: center;">'.$_REQUEST['bikes'].'</td>
       <td style="text-align: right;">'.number_format($prices[$_REQUEST['days']], 2, ",", ".")." €".'</td>
       <td style="text-align: right;">'.number_format(($_REQUEST['bikes'] * $prices[$_REQUEST['days']]), 2, ",", ".")." €".'</td>
     </tr>';
 
   $html .= '<tr>
-      <td>'.$sizes[$_REQUEST['size']].'</td>
+      <td>'.strip_tags($sizes[$_REQUEST['size']]).'</td>
       <td style="text-align: center;">'.$_REQUEST['bikes'].'</td>
       <td style="text-align: right;">'.number_format($prices[$_REQUEST['size']], 2, ",", ".")." €".'</td>
       <td style="text-align: right;">'.number_format(($_REQUEST['bikes'] * $prices[$_REQUEST['size']]), 2, ",", ".")." €".'</td>

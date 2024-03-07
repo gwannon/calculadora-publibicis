@@ -39,9 +39,9 @@ function calc_pb_shortcode ($atts, $content) {
     "4-days" => __("5 DÍAS", "calc-pb"),
   ];
   $sizes = [
-    "1200x1770" => __("<span>Lona de </span>ONE 1200x1770 mm", "calc-pb"),
-    "1770x1770" => __("<span>Lona de </span>PLUS 1770x1770 mm", "calc-pb"),
-    "2340x1770" => __("<span>Lona de </span>XL PLUS 2340x1770 mm", "calc-pb"),
+    "1200x1770" => __("<span>Lona de </span><b style='display: inline-block;'>ONE</b> 1200x1770 mm", "calc-pb"),
+    "1770x1770" => __("<span>Lona de </span><b style='display: inline-block;'>PLUS</b> 1770x1770 mm", "calc-pb"),
+    "2340x1770" => __("<span>Lona de </span><b style='display: inline-block;'>XL PLUS</b> 2340x1770 mm", "calc-pb"),
   ];
   $extras = [
     "flyers" => __("Flyers <span>1.000 uds.</span>", "calc-pb"),
@@ -71,7 +71,13 @@ function calc_pb_shortcode ($atts, $content) {
     calc_pb_create_clientify_contact ($_REQUEST['email'], $_REQUEST['fullname'], $_REQUEST['phone']);
 
     //Generamos el PDF del presupuesto
-    $file = calc_pb_generate_pdf($html."<br><br>".stripslashes(get_option('_calc_pb_conditions')), $_REQUEST['size']);
+    $firma = '<br><br><table border="0" width="100%" cellspacing="0" cellpadding="15" align="center">
+      <tbody>
+      <tr style="background-color: #0ad37c;" bgcolor="#0ad37c">
+        <td align="center" valign="middle"><span style="color: #fff; font-size: 20px; line-height: 24px;"><img src="https://publibicis.es/wp-content/uploads/2024/03/logo-upb-footer-1.png" alt="Urban Publicity Bikes es un producto de EÑUTT" width="584" /></span></td>
+      </tr></tbody></table>
+      <p style="color: #000; font-size: 16px; line-height: 20px;"><font size="2">Eñutt Comunicación S.L. - B95150389 - 944 804 718</font></p>';
+    $file = calc_pb_generate_pdf($html."<br><br>".stripslashes(get_option('_calc_pb_conditions')).$firma, $_REQUEST['size']);
    
     //Mandamos email con el presupuesto
     $headers[] = 'MIME-Version: 1.0';
