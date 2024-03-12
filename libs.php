@@ -96,6 +96,24 @@ function calc_pb_generate_html($timetables, $sizes, $extras, $prices, $total) {
         </tr>';
     } 
   }
+  if($_REQUEST['bikes'] > 1) {
+    $html .= '<tr>
+      <td>'.__("Descuento al contratar 2 o más bicis", "calc-pb").'</td>
+      <td style="text-align: center;">1</td>
+      <td style="text-align: right;">15%</td>
+      <td style="text-align: right;">-'.number_format(($_REQUEST['bikes'] * $prices[$_REQUEST['days']] * 0.15), 2, ",", ".")." €".'</td>
+    </tr>';
+  }
+
+  if($_REQUEST['state'] != 'Bizkaia') {
+    $html .= '<tr>
+      <td>'.__("Incremento por campaña fuera de Bizkaia", "calc-pb").'</td>
+      <td style="text-align: center;">1</td>
+      <td style="text-align: right;">'.number_format($prices['transport'], 2, ",", ".")." €".'</td>
+      <td style="text-align: right;">'.number_format($prices['transport'], 2, ",", ".")." €".'</td>
+    </tr>';
+  }
+
   $html .= '<tr>
         <th colspan="2">'.__("Total", "calc-pb").'</th>
         <td colspan="2" style="text-align: right;">'.number_format($total, 2, ",", ".")." €".'</td>

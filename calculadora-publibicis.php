@@ -48,7 +48,7 @@ function calc_pb_shortcode ($atts, $content) {
     "design" => __("Diseño de la lona", "calc-pb")
   ];
 
-  $states = ['Álava/Araba', "Bizkaia", "Guipuzkoa", "Cantabria", "Navarra", "Rioja"];
+  $states = ["Álava/Araba", "Guipuzkoa", "Cantabria"];
   
   if(isset($_REQUEST['calculate'])) { 
     
@@ -62,6 +62,9 @@ function calc_pb_shortcode ($atts, $content) {
         $total = $total + $prices[$label];
       }
     }
+
+    if($_REQUEST['state'] != 'Bizkaia') $total = $total + $prices['transport'];
+
     $html = calc_pb_generate_html($timetables, $sizes, $extras, $prices, $total);
 
     //Mostramos el mensaje de gracias
@@ -179,6 +182,7 @@ function calc_pb_shortcode ($atts, $content) {
           </label>
           <label>
             <select name="state" required>
+              <option value="Bizkaia"><?php _e("Elegir provincia si se va a hacer fuera de Bizkaia", "calc-pb"); ?></option>
               <?php foreach($states as $state) { ?> 
                 <option value="<?=$state?>"<?=(isset($_REQUEST['state']) && $state == $_REQUEST['state'] ? " selected='selected'" : "")?>><?=$state?></option>
               <?php } ?> 
