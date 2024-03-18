@@ -3,13 +3,13 @@ form#cp-form input[type=checkbox] {
   display: none;
 }
 
-form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3, #cp-step4) {
+form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3, #cp-step4, #cp-step5) {
 	min-height: 264px;
 	flex-direction: column;
 	justify-content: space-between;
 }
 
-form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label {
+form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3, #cp-step4) label {
   border: 2px solid #f0f0f0;
   padding: 20px;
   border-radius: 10px;
@@ -30,8 +30,12 @@ form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label {
 }
 
 @media (min-width: 800px) {
-  form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label {
+  form#cp-form div:is(#cp-step1, #cp-step2, #cp-step4) label {
     width: calc(33.33% - 52px);
+  }
+
+  form#cp-form div#cp-step3 label {
+    width: calc(50% - 52px);
   }
 }
 
@@ -39,17 +43,17 @@ form#cp-form div#cp-step1 label span {
   display: none;
 }
 
-form#cp-form div#cp-step3 label {
+form#cp-form div#cp-step4 label {
   width: calc(50% - 49px);
 }
 
-form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label img {
+form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3, #cp-step4) label img {
   margin-bottom: 10px;
   max-width: 100px;
 }
 
-form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label:has(input[type=radio]:checked),
-form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3) label:has(input[type=checkbox]:checked) {
+form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3, #cp-step4) label:has(input[type=radio]:checked),
+form#cp-form div:is(#cp-step1, #cp-step2, #cp-step3, #cp-step4) label:has(input[type=checkbox]:checked) {
   border: 2px solid #0be58e;
 } 
 
@@ -86,35 +90,39 @@ form#cp-form div.cp-step > div:nth-of-type(2) {
   flex-wrap: wrap;
 }
 
-form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) {
+form#cp-form div.cp-step#cp-step5 > div:nth-of-type(2) {
   flex-wrap: wrap;
   justify-content: center;
 }
 
-form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) > label {
+form#cp-form div.cp-step#cp-step5 > div:nth-of-type(2) > label {
   width: calc(100% - 10px);
 }
 
 @media (min-width: 800px) {
-  form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) > label {
+  form#cp-form div.cp-step#cp-step5 > div:nth-of-type(2) > label {
     width: calc(50% - 10px);
+  }
+
+  form#cp-form div.cp-step#cp-step5 > div:nth-of-type(2) > label:nth-of-type(3) {
+    width: calc(100% - 10px);
   }
 }
 
 
 
-form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) > label > *:is(input[type=text], input[type=email], select) {
+form#cp-form div.cp-step#cp-step5 > div:nth-of-type(2) > label > *:is(input[type=text], input[type=email], select) {
   width: 100%;
 }
 
-form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) > label:last-of-type {
+form#cp-form div.cp-step#cp-step5 > div:nth-of-type(2) > label:last-of-type {
   display: flex;
   width: calc(100% - 10px);
   gap: 10px;
   font-size: 12px;
 }
 
-form#cp-form div.cp-step#cp-step4 > div:nth-of-type(2) > label:last-of-type > input {
+form#cp-form div.cp-step#cp-step5 > div:nth-of-type(2) > label:last-of-type > input {
   display: inline-block;
 }
 
@@ -136,14 +144,14 @@ form#cp-form > div.cp-step button:hover {
   background-color: #0ad37c;
 }
 
-form#cp-form > div.cp-step:is(#cp-step2, #cp-step3) > div > label {
+form#cp-form > div.cp-step:is(#cp-step2, #cp-step3, #cp-step4) > div > label {
   color: #0be58e;
   font-weight: 700;
   font-size: 22px;
   line-height: 120%;
 }
 
-form#cp-form > div.cp-step:is(#cp-step2, #cp-step3) > div > label > span {
+form#cp-form > div.cp-step:is(#cp-step2 #cp-step3, #cp-step4) > div > label > span {
   display: block;
   text-align: center;
   font-weight: 600;
@@ -172,7 +180,7 @@ form#cp-form > div.cp-step#cp-step2 > label:last-of-type {
   }
 }
 
-form#cp-form > div.cp-step#cp-step3 img {
+form#cp-form > div.cp-step#cp-step4 img {
   max-width: 80px;
 }
 

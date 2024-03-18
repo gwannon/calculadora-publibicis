@@ -36,7 +36,7 @@ function calc_pb_shortcode ($atts, $content) {
   $timetables = [
     "1-day" => __("1 DÍA", "calc-pb"),
     "3-days" => __("3 DÍAS", "calc-pb"),
-    "4-days" => __("5 DÍAS", "calc-pb"),
+    "5-days" => __("5 DÍAS", "calc-pb"),
   ];
   $sizes = [
     "1200x1770" => __("<span>Lona de </span><b style='display: inline-block;'>ONE</b> 1200x1770 mm", "calc-pb"),
@@ -48,7 +48,7 @@ function calc_pb_shortcode ($atts, $content) {
     "design" => __("Diseño de la lona", "calc-pb")
   ];
 
-  $states = ["Álava/Araba", "Guipuzkoa", "Cantabria"];
+  $states = ["BIZKAIA", "ARABA", "GIPUZKOA", "CANTABRIA"];
   
   if(isset($_REQUEST['calculate'])) { 
     
@@ -119,7 +119,7 @@ function calc_pb_shortcode ($atts, $content) {
       <div id="counter">
         <div><?php _e("¡PSS! ¿TIENES UN MIN?", "calc-pb"); ?></div>
         <div><?php _e("Calcula el presupuesto de tu campaña.", "calc-pb"); ?></div> 
-        <img src="/wp-content/plugins/calculadora-publibicis/images/1.svg">
+        <img src="/wp-content/plugins/calculadora-publibicis/images/1-5.svg">
       </div>
       <div id="cp-step1" class="cp-step current">
         <div><?php _e("Tamaño de la lona", "calc-pb"); ?></div>
@@ -138,7 +138,7 @@ function calc_pb_shortcode ($atts, $content) {
       <div id="cp-step2" class="cp-step">
         <div><?php _e("Duración de campaña", "calc-pb"); ?></div>
         <div>
-          <?php $control = 0; $control = 0;foreach ($timetables as $label => $text) { ?> 
+          <?php $control = 0; foreach ($timetables as $label => $text) { ?> 
             <label>
               <input type="radio" name="days" value="<?=$label?>"<?=((isset($_REQUEST['days']) && $label == $_REQUEST['days']) || (!isset($_REQUEST['days']) && $control == 0) ? " checked='checked'" : "")?> required>
               <?=$text?>
@@ -155,6 +155,26 @@ function calc_pb_shortcode ($atts, $content) {
       </div>
      
       <div id="cp-step3" class="cp-step">
+        <div><?php _e("Dónde se realizará la campaña", "calc-pb"); ?></div>
+        <div>
+          <?php $control = 0; foreach ($states as $state) { ?> 
+            <label>
+              <input type="radio" name="state" value="<?=$state?>"<?=((isset($_REQUEST['state']) && $state == $_REQUEST['state']) || (!isset($_REQUEST['state']) && $control == 0) ? " checked='checked'" : "")?> required>
+              <?=$state?>
+            </label>
+          <?php $control ++; } ?>
+        </div>
+        <!-- <select name="state" required>
+          <option value="Bizkaia"><?php _e("Elegir provincia si se va a hacer fuera de Bizkaia", "calc-pb"); ?></option>
+          <?php foreach($states as $state) { ?> 
+            <option value="<?=$state?>"<?=(isset($_REQUEST['state']) && $state == $_REQUEST['state'] ? " selected='selected'" : "")?>><?=$state?></option>
+          <?php } ?> 
+        </select> -->
+        <button class="next"><?php _e("Siguiente", "calc-pb"); ?></button>
+      </div>
+
+
+      <div id="cp-step4" class="cp-step">
         <div><?php _e("Opciones", "calc-pb"); ?></div>
         <div>
           <?php $control = 0; foreach ($extras as $label => $text) { ?> 
@@ -168,7 +188,7 @@ function calc_pb_shortcode ($atts, $content) {
         <button class="next"><?php _e("Siguiente", "calc-pb"); ?></button>
       </div>
 
-      <div id="cp-step4" class="cp-step">
+      <div id="cp-step5" class="cp-step">
         <div><?php _e("Rellena tus datos", "calc-pb"); ?></div>
         <div>
           <label>
@@ -179,14 +199,6 @@ function calc_pb_shortcode ($atts, $content) {
           </label>
           <label>
             <input type="email" name="email" placeholder="<?php _e("Email", "calc-pb"); ?>*" value="<?=(isset($_REQUEST['email']) && $_REQUEST['email'] != '' ? strip_tags($_REQUEST['email']) : "")?>" required>
-          </label>
-          <label>
-            <select name="state" required>
-              <option value="Bizkaia"><?php _e("Elegir provincia si se va a hacer fuera de Bizkaia", "calc-pb"); ?></option>
-              <?php foreach($states as $state) { ?> 
-                <option value="<?=$state?>"<?=(isset($_REQUEST['state']) && $state == $_REQUEST['state'] ? " selected='selected'" : "")?>><?=$state?></option>
-              <?php } ?> 
-            </select>
           </label>
           <label>
             <input type="checkbox" name="privacy" value="1" required> <p><?php _e("Acepto la <a href='/politica-privacidad/'>política de privacidad</a>.", ''); ?></p>
