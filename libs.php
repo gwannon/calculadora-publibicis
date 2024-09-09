@@ -99,7 +99,14 @@ function calc_pb_generate_html($timetables, $sizes, $extras, $prices, $total) {
 
   if($_REQUEST['state'] != 'BIZKAIA') {
     $html .= '<tr>
-      <td>'.__("Incremento por campaña fuera de Bizkaia", "calc-pb").'</td>
+      <td>'.__("Transporte y montaje", "calc-pb").'</td>
+      <td style="text-align: center;">1</td>
+      <td style="text-align: right;">'.number_format($prices['transport_outside'], 2, ",", ".")." €".'</td>
+      <td style="text-align: right;">'.number_format($prices['transport_outside'], 2, ",", ".")." €".'</td>
+    </tr>';
+  } else  {
+    $html .= '<tr>
+      <td>'.__("Transporte y montaje", "calc-pb").'</td>
       <td style="text-align: center;">1</td>
       <td style="text-align: right;">'.number_format($prices['transport'], 2, ",", ".")." €".'</td>
       <td style="text-align: right;">'.number_format($prices['transport'], 2, ",", ".")." €".'</td>

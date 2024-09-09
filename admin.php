@@ -16,7 +16,8 @@ function calc_pb_page_settings() {
     "2340x1770" => __("Lona XL PLUS 2340x1770 mm", "calc-pb"),
     "flyers" => __("Flyers (1.000 uns)", "calc-pb"),
     "design" => __("Diseño de la lona", "calc-pb"),
-		"transport" => __("Incremento por campaña fuera de Bizkaia", "calc-pb"), 
+		"transport" => __("Transporte y montaje Bizkaia", "calc-pb"), 
+		"transport_outside" => __("Transporte y montaje fuera Bizkaia", "calc-pb"), 
 	];
 
 	$sizes = [ 

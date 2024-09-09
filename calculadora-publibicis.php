@@ -63,7 +63,8 @@ function calc_pb_shortcode ($atts, $content) {
       }
     }
 
-    if($_REQUEST['state'] != 'BIZKAIA') $total = $total + $prices['transport'];
+    if($_REQUEST['state'] != 'BIZKAIA') $total = $total + $prices['transport_outside'];
+    else $total = $total + $prices['transport'];
 
     $html = calc_pb_generate_html($timetables, $sizes, $extras, $prices, $total);
 
