@@ -77,15 +77,15 @@ function calc_pb_generate_html($timetables, $sizes, $extras, $prices, $total) {
       <td style="text-align: right;">'.number_format($prices[$_REQUEST['size']], 2, ",", ".")." €".'</td>
       <td style="text-align: right;">'.number_format(($_REQUEST['bikes'] * $prices[$_REQUEST['size']]), 2, ",", ".")." €".'</td>
     </tr>';
-
-  if($_REQUEST['bikes'] > 1) {
+  //Desactivamos el 15% de descuento por número de bicis
+  /*if($_REQUEST['bikes'] > 1) {
     $html .= '<tr>
       <td>'.__("Descuento al contratar 2 o más bicis", "calc-pb").'</td>
       <td style="text-align: center;">1</td>
       <td style="text-align: right;">15%</td>
       <td style="text-align: right;">-'.number_format(($_REQUEST['bikes'] * $prices[$_REQUEST['days']] * 0.15), 2, ",", ".")." €".'</td>
     </tr>';
-  }
+  }*/
   foreach ($extras as $label => $text) { 
     if(isset($_REQUEST[$label]) && $_REQUEST[$label] == 1) { 
       $html .= '<tr>

@@ -51,12 +51,12 @@ function calc_pb_shortcode ($atts, $content) {
   $states = ["BIZKAIA", "ARABA", "GIPUZKOA", "CANTABRIA"];
   
   if(isset($_REQUEST['calculate'])) { 
-    
-    if($_REQUEST['bikes'] > 1) {
+    //Desactivamos el 15% de descuento por número de bicis
+    /*if($_REQUEST['bikes'] > 1) {
       $total = ($_REQUEST['bikes'] * $prices[$_REQUEST['size']]) + ($_REQUEST['bikes'] * $prices[$_REQUEST['days']] * 0.85);
-    } else {
+    } else {*/
       $total = ($_REQUEST['bikes'] * $prices[$_REQUEST['size']]) + ($_REQUEST['bikes'] * $prices[$_REQUEST['days']]);
-    }
+    /* } */
     foreach ($extras as $label => $text) {
       if(isset($_REQUEST[$label]) && $_REQUEST[$label] == 1) {
         $total = $total + $prices[$label];
